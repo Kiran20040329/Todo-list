@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced To-Do List</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f7f7f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .todo-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        input[type="text"], input[type="date"] {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px;
+            border: none;
+            background-color: #5cba47;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #4da63d;
+        }
+
+        ul {
+            list-style: none;
+            margin-top: 20px;
+        }
+
+        li {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        li.completed {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+
+        .delete-btn, .modify-btn {
+            background-color: #ff5c5c;
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+
+        .modify-btn {
+            background-color: #5c9eff;
+        }
+
+        .delete-btn:hover {
+            background-color: #ff4343;
+        }
+
+        .modify-btn:hover {
+            background-color: #4d8eff;
+        }
+    </style>
+</head>
+<body>
+    <div class="todo-container">
+        <h1>To-Do List</h1>
+        <form id="todo-form">
+            <input type="text" id="todo-input" placeholder="Enter a new task..." required>
+            <input type="date" id="todo-date" required>
+            <button type="submit">Add Task</button>
+        </form>
+        <ul id="todo-list"></ul>
+    </div>
+
+    <script>
+        // Select form and list elements
+        const todoForm = document.getElementById('todo-form');
+        const todoInput = document.getElementById('todo-input');
+        const todoDate = document.getElementById('todo-date');
+        const todoList = document.getElementById('todo-list');
+
+        // Add event listener to form submission
+        todoForm.addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent form submission
+            const taskText = todoInput.value; // Get the value of the task input
+            const taskDate = todoDate.value; // Get the value of the date input
+
+            if (taskText.trim() && taskDate) {
+                addTodo(taskText, taskDate); // Call the function to add a task
+                todoInput.value = ''; // Clear input fields after adding
+                todoDate.value = ''; 
+            }
+        });
+
+        // Function to add a new task with date to the list
+        function addTodo(taskText, taskDate) {
+            const todoItem = document.createElement('li');
+
+            // Create task display with date
+            const taskInfo = document.createElement('span');
+            taskInfo.textContent = `${taskText} - Due: ${taskDate}`;
+            todoItem.appendChild(taskInfo);
+
+            // Create delete button
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Delete';
+            deleteButton.classList.add('delete-btn');
+
+            // Create modify button
+            const modifyButton = document.createElement('button');
+            modifyButton.textContent = 'Modify';
+            modifyButton.classList.add('modify-btn');
+
+            // Append buttons to the list item
+            todoItem.appendChild(modifyButton);
+            todoItem.appendChild(deleteButton);
+
+            // Append the list item to the list
+            todoList.appendChild(todoItem);
+
+            // Add event listeners for task modification, completion, and deletion
+            todoItem.addEventListener('click', function(event) {
+                if (event.target.classList.contains('delete-btn')) {
+                    todoItem.remove();
+                } else if (event.target.classList.contains('modify-btn')) {
+                    modifyTask(todoItem, taskInfo);
+                } else {
+                    todoItem.classList.toggle('completed');
+                }
+            });
+        }
+
+        // Function to modify the task
+        function modifyTask(todoItem, taskInfo) {
+            const newTaskText = prompt("Modify task:", taskInfo.textContent.split(' - Due: ')[0]);
+            const newTaskDate = prompt("Modify date (yyyy-mm-dd):", taskInfo.textContent.split(' - Due: ')[1]);
+
+            if (newTaskText && newTaskDate) {
+                taskInfo.textContent = `${newTaskText} - Due: ${newTaskDate}`;
+            }
+        }
+    </script>
+</body>
+</html>
